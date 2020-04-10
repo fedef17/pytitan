@@ -55,6 +55,7 @@ wl_med, stat_latsza, ok_szas, coeffs_latsza, cub_latsza, pix_latsza, bestsza, pi
 bestsza_data = pickle.load(open(cart_out + 'bestsza_data_2013-2017_v2.p', 'rb'))
 allsza_data = pickle.load(open(cart_out + 'allsza_data_2013-2017_v2.p', 'rb'))
 
+forma = '{:6d}'*18 + '\n'
 
 fillo = open(cart_out + 'stat_lat_szamin_bestcube.dat', 'w')
 forma2 = '{:6.0f}'*18 + '\n'
