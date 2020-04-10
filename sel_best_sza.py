@@ -106,7 +106,7 @@ for iye, ye in enumerate(range(2013, 2018)):
             tutticubs = []
             for cub in unicub:
                 okcub = allcubi == cub
-                if np.min(tot_alts[okcub]) < 550. and np.max(tot_alts[ok_cub]) > 950 and np.sum(okcub) > 8:
+                if np.min(tot_alts[okcub]) < 550. and np.max(tot_alts[okcub]) > 950 and np.sum(okcub) > 8:
                     tutticubs.append((cub, np.sum(okcub)))
                     print(cub, np.sum(okcub))
 
