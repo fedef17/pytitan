@@ -1,0 +1,18 @@
+name: plim
+channels:
+- uvcdat
+- scitools
+- conda-forge
+- defaults
+dependencies:
+- python=2.7
+- cartopy
+- matplotlib
+- numpy
+- ipython
+- python-dateutil
+- scipy
+- spyder
+- seaborn
+- xarray
+- planetaryimage
