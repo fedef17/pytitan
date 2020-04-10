@@ -140,7 +140,7 @@ for iye, ye in enumerate(range(2013, 2018)):
                 fitco = np.polyfit(allalts, allspet[:, iwl], deg = 3, cov = False)
                 coeffs_latsza[(ye, latg, szag)].append((wla, fitco))
 
-            for ialt, (alt1, alt2) in enumerate(zip(alts[:-1], alts[1:])):
+            for ialt, (alt1, alt2, altg) in enumerate(zip(alts[:-1], alts[1:], altgrid)):
                 cond_alt = (datasav.alt >= alt1) & (datasav.alt < alt2)
 
                 cond_tot_alt = np.all([cond_tot, cond_alt], axis = 0)
