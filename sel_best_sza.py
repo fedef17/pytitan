@@ -121,7 +121,7 @@ for iye, ye in enumerate(range(2013, 2018)):
 
             # metto in bestsza il cubo più abbondante in questo sza
             n_cubs = [cos[1] for cos in tutticubs]
-            best_cub = unicub[np.argmax(n_cubs)]
+            best_cub = tutticubs[np.argmax(n_cubs)][0]
 
             cond_cub = datasav.cubo == best_cub # adding this condition
             cond_tot_cub = np.all([cond_time, cond_lat, cond_sza, cond_cub], axis = 0)
