@@ -25,9 +25,9 @@ allattrs = datasav.dtype.names # questa è la lista di tutti gli attributi del d
 print('all attributes: ', allattrs)
 
 # print('tutti i cubi disponibili: ', allcubi)
-allcubi = np.unique(np.concatenate(datasav.cubo))
-for cub in allcubi:
-    print(cub, np.sum(datasav.cubo == cub))
+# allcubi = np.unique(np.concatenate(datasav.cubo))
+# for cub in allcubi:
+#     print(cub, np.sum(datasav.cubo == cub))
 
 # Definisco delle scatole
 years = np.arange(2013, 2018)
