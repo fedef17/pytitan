@@ -113,24 +113,23 @@ for iye, ye in enumerate(range(2013, 2018)):
             if len(tutticubs) == 0:
                 stat_latsza[(ye, latg, szag)] = 0
                 continue
+            else:
+                stat_latsza[(ye, latg, szag)] = np.sum(cond_tot)
+                cub_latsza[(ye, latg, szag)] = unicub
+                pix_latsza[(ye, latg, szag)] = np.where(cond_tot)[0]
+                ok_szas[(ye, latg)].append(np.mean(np.concatenate(datasav.sza[cond_tot])))
 
-            # tengo solo il cubo più abbondante in questo sza
+            # metto in bestsza il cubo più abbondante in questo sza
             n_cubs = [cos[1] for cos in tutticubs]
             best_cub = unicub[np.argmax(n_cubs)]
 
             cond_cub = datasav.cubo == best_cub # adding this condition
-            cond_tot = np.all([cond_time, cond_lat, cond_sza, cond_cub], axis = 0)
-
-            stat_latsza[(ye, latg, szag)] = np.sum(cond_tot)
-            cub_latsza[(ye, latg, szag)] = best_cub
-            pix_latsza[(ye, latg, szag)] = np.where(cond_tot)[0]
-
-            ok_szas[(ye, latg)].append(np.mean(np.concatenate(datasav.sza[cond_tot])))
+            cond_tot_cub = np.all([cond_time, cond_lat, cond_sza, cond_cub], axis = 0)
 
             if len(ok_szas[(ye, latg)]) == 1:
                 # this is the best sza
-                bestsza[(ye, latg)] = ok_szas[(ye, latg)]
-                pix_bestsza[(ye, latg)] = pix_latsza[(ye, latg, szag)]
+                pix_bestsza[(ye, latg)] = np.where(cond_tot_cub)[0]
+                bestsza[(ye, latg)] = np.mean(np.concatenate(datasav.sza[cond_tot_cub]))
 
             allspet = np.stack([spe[okwl] for spe in datasav.spet[cond_tot]])
             allalts = np.concatenate(datasav.alt[cond_tot])
@@ -181,4 +180,4 @@ for ke in pix_latsza:
             gigi.__setattr__(att, np.concatenate(gigi.__getattribute__(att)))
     bestdata[ke] = gigi
 
-pickle.dump(bestdata, open(cart_out + 'bestcube_allsza_data_2013-2017_v2.p', 'wb'))
+pickle.dump(bestdata, open(cart_out + 'allsza_data_2013-2017_v2.p', 'wb'))
