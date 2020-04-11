@@ -90,6 +90,27 @@ def writevec(ifile, vec, n_per_line, format_str):
     return
 
 
+def write_obs_frompixels(filename, pixels):
+    """
+    Wrap for pixels as in bestsza_data.
+    """
+
+    n_freq = len(pixels.wl[0])
+    n_limb = len(pixels)
+
+    ord_pix = np.argsort(pixels.alt)[::-1]
+    dists = pixels.dist[ord_pix]
+    alts = pixels.alt[ord_pix]
+    freq = pixels.wl[0]
+
+    obs = np.stack(pixels.spet[ord_pix]).T # Creates a matrix with frequencies in different lines and observations in different columns
+    flags = np.stack(pixels.bbl[ord_pix]).T
+
+    write_obs(n_freq, n_limb, dists, alts, freq, obs, flags, filename)
+
+    return
+
+
 def write_obs(n_freq, n_limb, dists, alts, freq, obs, flags, filename, old_file = 'None'):
     """
     Writes files of VIMS observations. (gbb_2015 format)
@@ -233,5 +254,19 @@ def write_input_prof_gbb(filename, prof, ptype, n_alt = 151, alt_step = 10.0, nl
     infile.write('{:1s}\n'.format('#'))
     for i in range(nlat):
         writevec(infile,prof[::-1],n_per_line,strin)
+
+    return
+
+
+def plot_pdfpages(filename, figs):
+    """
+    Saves a list of figures to a pdf file.
+    """
+    from matplotlib.backends.backend_pdf import PdfPages
+
+    pdf = PdfPages(filename)
+    for fig in figs:
+        pdf.savefig(fig)
+    pdf.close()
 
     return

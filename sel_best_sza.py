@@ -69,7 +69,8 @@ median_all = dict() #np.zeros((len(years), len(latgrid), len(szagrid), len(altgr
 mean_all = dict() #np.zeros((len(years), len(latgrid), len(szagrid), len(altgrid), wldim))
 std_all = dict()#np.zeros((len(years), len(latgrid), len(szagrid), len(altgrid), wldim))
 
-for iye, ye in enumerate(range(2013, 2018)):
+#for iye, ye in enumerate(range(2013, 2018)):
+for iye, ye in enumerate([2017]):
     cond_time = (datasav.year >= ye) & (datasav.year < ye+1)
     print(ye, np.sum(cond_time))
 
@@ -125,11 +126,15 @@ for iye, ye in enumerate(range(2013, 2018)):
 
             cond_cub = datasav.cubo == best_cub # adding this condition
             cond_tot_cub = np.all([cond_time, cond_lat, cond_sza, cond_cub], axis = 0)
+            print(tutticubs)
+            print('best', best_cub, np.sum(cond_tot_cub))
 
             if len(ok_szas[(ye, latg)]) == 1:
                 # this is the best sza
                 pix_bestsza[(ye, latg)] = np.where(cond_tot_cub)[0]
                 bestsza[(ye, latg)] = np.mean(np.concatenate(datasav.sza[cond_tot_cub]))
+
+                if latg == 5.0: sys.exit()
 
             allspet = np.stack([spe[okwl] for spe in datasav.spet[cond_tot]])
             allalts = np.concatenate(datasav.alt[cond_tot])
