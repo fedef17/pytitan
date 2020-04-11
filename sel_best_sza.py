@@ -69,8 +69,7 @@ median_all = dict() #np.zeros((len(years), len(latgrid), len(szagrid), len(altgr
 mean_all = dict() #np.zeros((len(years), len(latgrid), len(szagrid), len(altgrid), wldim))
 std_all = dict()#np.zeros((len(years), len(latgrid), len(szagrid), len(altgrid), wldim))
 
-#for iye, ye in enumerate(range(2013, 2018)):
-for iye, ye in enumerate([2017]):
+for iye, ye in enumerate(range(2013, 2018)):
     cond_time = (datasav.year >= ye) & (datasav.year < ye+1)
     print(ye, np.sum(cond_time))
 
@@ -134,8 +133,6 @@ for iye, ye in enumerate([2017]):
                 pix_bestsza[(ye, latg)] = np.where(cond_tot_cub)[0]
                 bestsza[(ye, latg)] = np.mean(np.concatenate(datasav.sza[cond_tot_cub]))
 
-                if latg == 5.0: sys.exit()
-
             allspet = np.stack([spe[okwl] for spe in datasav.spet[cond_tot]])
             allalts = np.concatenate(datasav.alt[cond_tot])
 
@@ -176,13 +173,13 @@ pickle.dump(bestdata, open(cart_out + 'bestsza_data_2013-2017_v2.p', 'wb'))
 
 
 # Salvo un datasav ridotto al miglior cubo di ogni sza
-bestdata = dict()
+alldata = dict()
 
 for ke in pix_latsza:
     gigi = datasav[pix_latsza[ke]]
     for att in allattrs:
         if len(gigi.__getattribute__(att)[0]) == 1:
             gigi.__setattr__(att, np.concatenate(gigi.__getattribute__(att)))
-    bestdata[ke] = gigi
+    alldata[ke] = gigi
 
-pickle.dump(bestdata, open(cart_out + 'allsza_data_2013-2017_v2.p', 'wb'))
+pickle.dump(alldata, open(cart_out + 'allsza_data_2013-2017_v2.p', 'wb'))
