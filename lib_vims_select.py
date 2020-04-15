@@ -143,7 +143,7 @@ def write_obs(n_freq, n_limb, dists, alts, freq, obs, flags, filename, old_file 
     for fr, ob, fl in zip(freq, obs, flags):
         strin = '{:10.4f}'.format(fr)
         for oo, ff in zip(ob,fl):
-            strin = strin + '{:15.4e}{:3d}'.format(oo,ff)
+            strin = strin + '{:15.4e}{:3d}'.format(oo, int(ff))
         strin = strin + '\n'
         infile.write(strin)
 
