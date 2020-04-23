@@ -94,17 +94,19 @@ def write_obs_frompixels(filename, pixels):
     """
     Wrap for pixels as in bestsza_data.
     """
+    if type(pixels) == list:
+        pixels = np.array(pixels)
 
-    n_freq = len(pixels.wl[0])
+    n_freq = len(pixels[0].wl)
     n_limb = len(pixels)
 
-    ord_pix = np.argsort(pixels.alt)[::-1]
-    dists = pixels.dist[ord_pix]
-    alts = pixels.alt[ord_pix]
-    freq = pixels.wl[0]
+    ord_pix = np.argsort([pix.alt for pix in pixels])[::-1]
+    dists = [pix.dist for pix in pixels[ord_pix]]
+    alts = [pix.alt for pix in pixels[ord_pix]]
+    freq = pixels[0].wl
 
-    obs = np.stack(pixels.spet[ord_pix]).T # Creates a matrix with frequencies in different lines and observations in different columns
-    flags = np.stack(pixels.bbl[ord_pix]).T
+    obs = np.stack([pix.spet for pix in pixels[ord_pix]]).T # Creates a matrix with frequencies in different lines and observations in different columns
+    flags = np.stack([pix.spet for pix in pixels[ord_pix]]).T
 
     write_obs(n_freq, n_limb, dists, alts, freq, obs, flags, filename)
 
