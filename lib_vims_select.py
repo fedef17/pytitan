@@ -90,7 +90,7 @@ def writevec(ifile, vec, n_per_line, format_str):
     return
 
 
-def write_obs_frompixels(filename, pixels):
+def write_obs_frompixels(filename, pixels, wl_range = None):
     """
     Wrap for pixels as in bestsza_data.
     """
@@ -108,17 +108,25 @@ def write_obs_frompixels(filename, pixels):
     obs = np.stack([pix.spet for pix in pixels[ord_pix]]).T # Creates a matrix with frequencies in different lines and observations in different columns
     flags = np.stack([pix.spet for pix in pixels[ord_pix]]).T
 
-    write_obs(n_freq, n_limb, dists, alts, freq, obs, flags, filename)
+    write_obs(n_freq, n_limb, dists, alts, freq, obs, flags, filename, wl_range = wl_range)
 
     return
 
 
-def write_obs(n_freq, n_limb, dists, alts, freq, obs, flags, filename, old_file = 'None'):
+def write_obs(n_freq, n_limb, dists, alts, freq, obs, flags, filename, old_file = 'None', wl_range = None):
     """
     Writes files of VIMS observations. (gbb_2015 format)
     :param filename:
     :return:
     """
+
+    if wl_range is not None:
+        print('Selecting wl range: {}'.format(wl_range))
+        okwl = (freq >= wl_range[0]) & (freq <= wl_range[1])
+        freq = freq[okwl]
+        obs = obs[okwl, :]
+        flags = flags[okwl, :]
+        n_freq = len(freq)
 
     infile = open(filename, 'w')
     data = datetime.now()
