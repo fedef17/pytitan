@@ -268,6 +268,129 @@ def write_input_prof_gbb(filename, prof, ptype, n_alt = 151, alt_step = 10.0, nl
     return
 
 
+def read_sim_gbb(filename):
+    """
+    Read sim_*.dat or spet_*.dat files in gbb format.
+    :return:
+    """
+    infile = open(filename, 'r')
+    line = infile.readline()
+    line = infile.readline()
+    alt = line.split()[0]
+    trova_spip(infile)
+
+    data = [line.split() for line in infile]
+    data_arr = np.array(data)
+    freq = np.array([float(r) for r in data_arr[:, 1]])
+    obs = np.array([float(r) for r in data_arr[:, 2]])
+    sim = np.array([float(r) for r in data_arr[:, 3]])
+    err = np.array([float(r) for r in data_arr[:, 4]])
+    #flags = data_arr[:, 2:2*n_limb+2:2]
+    #flags = flags.astype(np.int)
+    infile.close()
+
+    return alt, freq, obs, sim, err
+
+
+def color_set(n, cmap = 'nipy_spectral', bright_thres = None, full_cb_range = False, only_darker_colors = False):
+    """
+    Gives a set of n well chosen (hopefully) colors, darker than bright_thres. bright_thres ranges from 0 (darker) to 1 (brighter).
+
+    < full_cb_range > : if True, takes all cb values. If false takes the portion 0.05/0.95.
+    """
+
+    if bright_thres is None:
+        if only_darker_colors:
+            bright_thres = 0.6
+        else:
+            bright_thres = 1.0
+
+    cmappa = cm.get_cmap(cmap)
+    colors = []
+
+    if full_cb_range:
+        valori = np.linspace(0.0,1.0,n)
+    else:
+        valori = np.linspace(0.05,0.95,n)
+
+    for cos in valori:
+        colors.append(cmappa(cos))
+
+    for i, (col,val) in enumerate(zip(colors, valori)):
+        if color_brightness(col) > bright_thres:
+            # Looking for darker color
+            col2 = cmappa(val+1.0/(3*n))
+            col3 = cmappa(val-1.0/(3*n))
+            colori = [col, col2, col3]
+            brighti = np.array([color_brightness(co) for co in colori]).argmin()
+            colors[i] = colori[brighti]
+
+    return colors
+
+
+def plotta_sim_VIMS(nomefile, freq, obs, sim, all_sims = None, names = None, err=1.5e-8, title=None, auto = True, xscale=[-1,-1],yscale=[-1,-1],yscale_res=[-1,-1]):
+    """
+    Plots observed/simulated with residuals and single contributions.
+    :param obs: Observed
+    :param sim: Simulated total
+    :param n_sims: Number of simulated mol. contributions
+    :param all_sims: matrix with one sim per row
+    :param names: names of each sim
+    :return:
+    """
+    from matplotlib.font_manager import FontProperties
+    import matplotlib.gridspec as gridspec
+
+    fontP = FontProperties()
+    fontP.set_size('small')
+
+    if all_sims is None:
+        n_sims = 2
+    else:
+        n_sims = all_sims.shape[0]+2
+
+    fig = plt.figure(figsize=(12, 8))
+
+    gs = gridspec.GridSpec(2, 1,height_ratios=[2,1])
+    ax1 = plt.subplot(gs[0])
+    plt.ylabel('Radiance (W m$^{-2}$ nm$^{-1}$ sr$^{-1}$)')
+    plt.title(title)
+    ax2 = plt.subplot(gs[1])
+    if not auto:
+        ax1.set_xlim(xscale)
+        ax1.set_ylim(yscale)
+        ax2.set_xlim(xscale)
+        ax2.set_ylim(yscale_res)
+
+    plt.xlabel('Wavelength (nm)')
+
+#    plt.subplot(211)
+    colors = color_set(n_sims)
+    ax1.plot(freq,obs,color=colors[0],label='Data',linewidth=1.0)
+    ax1.scatter(freq,obs,color=colors[0],linewidth=1.0)
+    ax1.errorbar(freq,obs,color=colors[0],yerr=err, linewidth=1.0)
+
+    ax1.plot(freq,sim,color=colors[1],linewidth=3.0,label='Sim')
+    i=1
+    if all_sims is not None:
+        for namu, simu, colu in zip(names, all_sims, colors[2:]):
+            ax1.plot(freq, simu, color=colu, linestyle=li, label=namu, linewidth=2.0)
+            i +=1
+    ax1.grid()
+    ax1.legend(loc=1,bbox_to_anchor=(1.05,1.1),fontsize='small',fancybox=1,shadow=1)
+
+    ax2.grid()
+    ax2.plot(freq,obs-sim,color='red',linewidth=3.0)
+#    ax2.fill_between(freq,err*np.ones(len(freq)),-err*np.ones(len(freq)), facecolor=findcol(12,8)[0], alpha=0.1)
+    ax2.plot(freq,err*np.ones(len(freq)),color='black',linestyle='--',linewidth=2.0)
+    ax2.plot(freq,-err*np.ones(len(freq)),color='black',linestyle='--',linewidth=2.0)
+
+    fig.savefig(nomefile)
+    plt.close(fig)
+
+    return
+
+
 def plot_pdfpages(filename, figs):
     """
     Saves a list of figures to a pdf file.
